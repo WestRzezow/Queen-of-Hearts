@@ -1,0 +1,13 @@
+#revenue-view {
+    background: radial-gradient(circle at top right, #1a2333, #0b0e14);
+}
+
+.info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.info-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 15px; text-align: center; backdrop-filter: blur(10px); }
+.info-card .val { font-size: 14px; font-weight: 800; color: #fff; margin-top: 5px; }
+
+.gauges-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+.gauge-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; text-align: center; position: relative; }
+.gauge-card .g-text { position: absolute; bottom: 25px; left: 0; width: 100%; font-size: 14px; font-weight: 900; }
+
+#struct-list { background: var(--glass-bg); border-radius: 18px; padding: 15px; border: 1px solid var(--glass-border); }

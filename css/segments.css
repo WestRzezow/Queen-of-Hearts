@@ -1,0 +1,12 @@
+#segments-view {
+    background: radial-gradient(circle at top right, #1a2333, #0b0e14);
+}
+
+.client-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
+.client-card { 
+    background: var(--glass-bg); 
+    border: 1px solid var(--glass-border); 
+    padding: 15px; border-radius: 18px; 
+    display: flex; justify-content: space-between; align-items: center; 
+    backdrop-filter: blur(10px);
+}

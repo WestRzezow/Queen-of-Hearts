@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Queen of Hearts</title>
+  
+  <!-- Модульные стили приложения -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/canvas.css">
+  <link rel="stylesheet" href="css/revenue.css">
+  <link rel="stylesheet" href="css/segments.css">
+  <link rel="stylesheet" href="css/bpmn.css">
+  
+  <!-- Стили для BPMN Редактора и Симуляции -->
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js-token-simulation/assets/css/bpmn-js-token-simulation.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js/dist/assets/diagram-js.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js/dist/assets/bpmn-font/css/bpmn.css">
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- ЭКРАН 1: КАНВА -->
+  <div id="canvas-view" class="view-screen active">
+    <div class="block kp" onclick="tg.showAlert('Partnerzy')">
+      <div class="block-title">Partnerzy</div>
+      <div class="block-label">Dostawcy</div>
+    </div>
+    <div class="block ka" onclick="showView('bpmn')">
+      <div class="block-title">Działania</div>
+      <div class="block-label" style="color:var(--accent-blue)">Procesy</div>
+    </div>
+    <div class="block kr" onclick="tg.showAlert('Zasoby')">
+      <div class="block-title">Zasoby</div>
+      <div class="block-label">Zasoby</div>
+    </div>
+    <div class="block vp" onclick="tg.showAlert('Wartość')">
+      <div class="block-title">Wartość</div>
+      <div class="block-label">Oferta</div>
+    </div>
+    <div class="block cr" onclick="tg.showAlert('Relacje')">
+      <div class="block-title">Relacje</div>
+      <div class="block-label">Relacje</div>
+    </div>
+    <div class="block ch" onclick="tg.showAlert('Kanały')">
+      <div class="block-title">Kanały</div>
+      <div class="block-label">Social Media</div>
+    </div>
+    <div class="block cs" onclick="showView('segments')">
+      <div class="block-title">Segmenty</div>
+      <div class="block-label" style="color:var(--accent-purple)">Klienci</div>
+    </div>
+    <div class="block cost" onclick="tg.showAlert('Koszty')">
+      <div class="block-title">Koszty</div>
+      <div class="block-label">Koszty</div>
+    </div>
+    <div class="block rev" onclick="showView('revenue')">
+      <div class="block-title">Przychody</div>
+      <div class="block-label" style="color:var(--accent-green)">Finanse</div>
+    </div>
+  </div>
+
+  <!-- ЭКРАН 2: ФИНАНСЫ -->
+  <div id="revenue-view" class="view-screen">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2 style="margin:0; font-size:18px;">Finanse</h2>
+      <button class="back-btn" onclick="showView('canvas')">← Powrót</button>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="section-title">Przychód</div>
+        <div class="val" id="today-rev" style="color:var(--accent-green)">0</div>
+      </div>
+      <div class="info-card">
+        <div class="section-title">Klienci</div>
+        <div class="val" id="today-clients">0</div>
+      </div>
+      <div class="info-card">
+        <div class="section-title">Czas</div>
+        <div class="val" id="today-hours" style="color:var(--accent-yellow)">0</div>
+      </div>
+    </div>
+    <div class="gauges-container">
+      <div class="gauge-card">
+        <div class="section-title">Cel 20k PLN</div>
+        <div style="height:80px;"><canvas id="moneyGauge"></canvas></div>
+        <div class="g-text" id="month-rev">0</div>
+      </div>
+      <div class="gauge-card">
+        <div class="section-title">Cel 200h</div>
+        <div style="height:80px;"><canvas id="hoursGauge"></canvas></div>
+        <div class="g-text" id="month-hours">0</div>
+      </div>
+    </div>
+    <div class="section-title">📊 Struktura przychodów</div>
+    <div id="struct-list"></div>
+  </div>
+
+  <!-- ЭКРАН 3: КЛИЕНТЫ -->
+  <div id="segments-view" class="view-screen">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2 style="margin:0; font-size:18px;">Klienci</h2>
+      <button class="back-btn" onclick="showView('canvas')">← Powrót</button>
+    </div>
+    <div class="section-title">⭐ TOP 3: Lojalność</div>
+    <div id="loyalty-list" class="client-list"></div>
+    <div class="section-title">💎 TOP 3: Dochód</div>
+    <div id="income-list" class="client-list"></div>
+  </div>
+
+  <!-- ЭКРАН 4: ПРОЦЕССЫ -->
+  <div id="bpmn-view" class="view-screen" style="padding:0; overflow:hidden;">
+    <button class="back-btn-overlay" onclick="showView('canvas')">← Powrót</button>
+    <div id="bpmn-canvas" style="width:100%; height:100%;"></div>
+  </div>
+
+  <!-- Скрипты библиотек -->
+  <script src="https://unpkg.com/bpmn-js/dist/bpmn-modeler.production.min.js"></script>
+  <script src="https://unpkg.com/bpmn-js-token-simulation/dist/index.js"></script>
+
+  <!-- Логика приложения -->
+  <script src="js/app.js"></script>
+  <script src="js/revenue.js"></script>
+  <script src="js/segments.js"></script>
+  <script src="js/bpmn.js"></script>
+</body>
+</html>
