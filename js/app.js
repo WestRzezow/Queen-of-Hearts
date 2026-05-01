@@ -24,7 +24,16 @@ function decodeData(str) {
 
 const urlParams = new URLSearchParams(window.location.search);
 const raw = urlParams.get('data');
-window.db = decodeData(raw) || { revenue: null, segments: null };
+
+// Логика кэширования
+if (raw) {
+    // Если данные пришли в URL, сохраняем их как последние актуальные
+    localStorage.setItem('mras_cache', raw);
+}
+
+// Пытаемся взять данные из URL, а если их нет - из кэша
+const dataToDecode = raw || localStorage.getItem('mras_cache');
+window.db = decodeData(dataToDecode) || { revenue: null, segments: null, history: {} };
 
 function showView(viewName) {
     if (viewName !== 'canvas') haptic.impact('medium');
