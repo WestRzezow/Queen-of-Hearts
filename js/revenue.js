@@ -10,6 +10,7 @@ function initGauge(id, pct, col) {
 }
 
 function changeMonth(month) {
+    haptic.selection();
     if (window.db.history && window.db.history[month]) {
         updateRevenueView(window.db.history[month]);
     }

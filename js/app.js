@@ -4,6 +4,13 @@ tg.expand();
 tg.headerColor = '#0b0e14';
 tg.backgroundColor = '#0b0e14';
 
+// Хелпер для тактильной отдачи
+const haptic = {
+    impact: (style = 'light') => tg.HapticFeedback.impactOccurred(style),
+    notification: (type = 'success') => tg.HapticFeedback.notificationOccurred(type),
+    selection: () => tg.HapticFeedback.selectionChanged()
+};
+
 window.db = { revenue: null, segments: null };
 
 function decodeData(str) {
@@ -20,6 +27,7 @@ const raw = urlParams.get('data');
 window.db = decodeData(raw) || { revenue: null, segments: null };
 
 function showView(viewName) {
+    if (viewName !== 'canvas') haptic.impact('medium');
     console.log("Switching view to:", viewName);
     
     // Скрываем все
