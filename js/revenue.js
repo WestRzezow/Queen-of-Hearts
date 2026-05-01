@@ -1,4 +1,5 @@
 let charts = { money: null, hours: null };
+let currentMonthData = null;
 
 function initGauge(id, pct, col) {
     const ctx = document.getElementById(id).getContext('2d');
@@ -9,18 +10,21 @@ function initGauge(id, pct, col) {
     });
 }
 
-function initRevenue() {
-    const r = window.db.revenue;
-    if (!r) return;
+function changeMonth(month) {
+    if (window.db.history && window.db.history[month]) {
+        updateRevenueView(window.db.history[month]);
+    }
+}
 
-    document.getElementById('today-rev').innerText = r.today.rev.toLocaleString();
-    document.getElementById('today-clients').innerText = r.today.clients;
-    document.getElementById('today-hours').innerText = r.today.hours + 'h';
-    document.getElementById('month-rev').innerText = r.month.rev.toLocaleString();
-    document.getElementById('month-hours').innerText = r.month.hours + 'h';
+function updateRevenueView(data) {
+    document.getElementById('today-rev').innerText = data.rev.toLocaleString();
+    document.getElementById('today-clients').innerText = data.clients;
+    document.getElementById('today-hours').innerText = data.hours + 'h';
+    document.getElementById('month-rev').innerText = data.rev.toLocaleString();
+    document.getElementById('month-hours').innerText = data.hours + 'h';
 
-    const mP = Math.min(Math.round((r.month.rev/20000)*100), 100);
-    const hP = Math.min(Math.round((r.month.hours/200)*100), 100);
+    const mP = Math.min(Math.round((data.rev/20000)*100), 100);
+    const hP = Math.min(Math.round((data.hours/200)*100), 100);
 
     if (charts.money) charts.money.destroy();
     charts.money = initGauge('moneyGauge', mP, '#22c55e');
@@ -28,9 +32,43 @@ function initRevenue() {
     if (charts.hours) charts.hours.destroy();
     charts.hours = initGauge('hoursGauge', hP, '#facc15');
 
-    let html = '';
-    r.structure.forEach(s => {
-        html += `<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;"><span style="color:var(--text-dim)">${s.name}</span><span>${s.value.toLocaleString()} PLN</span></div>`;
+    // Структура
+    let structHtml = '';
+    data.structure.forEach(s => {
+        structHtml += `<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;"><span style="color:var(--text-dim)">${s.name}</span><span>${s.value.toLocaleString()} PLN</span></div>`;
     });
-    document.getElementById('struct-list').innerHTML = html;
+    document.getElementById('struct-list').innerHTML = structHtml;
+
+    // ТОПы
+    let loyaltyHtml = '';
+    data.loyalty.forEach((c, i) => {
+        loyaltyHtml += `<div class="client-item mini"><span class="rank">${i+1}</span><span class="name">${c.name}</span><span class="count">${c.count}</span></div>`;
+    });
+    document.getElementById('rev-loyalty-list').innerHTML = loyaltyHtml;
+
+    let incomeHtml = '';
+    data.income.forEach((c, i) => {
+        incomeHtml += `<div class="client-item mini"><span class="rank">${i+1}</span><span class="name">${c.name}</span><span class="count">${c.total.toLocaleString()}</span></div>`;
+    });
+    document.getElementById('rev-income-list').innerHTML = incomeHtml;
+}
+
+function initRevenue() {
+    const history = window.db.history;
+    if (!history) return;
+
+    const select = document.getElementById('month-select');
+    if (select.options.length === 0) {
+        Object.keys(history).forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.innerText = m;
+            select.appendChild(opt);
+        });
+    }
+
+    const firstMonth = Object.keys(history)[0];
+    if (firstMonth) {
+        updateRevenueView(history[firstMonth]);
+    }
 }
